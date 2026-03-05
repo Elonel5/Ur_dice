@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4D Dice</title>
+
+<style>
+
+html,body{
+margin:0;
+height:100%;
+}
+
+body{
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+font-family:Arial;
+color:white;
+user-select:none;
+touch-action:manipulation;
+
+background:
+repeating-linear-gradient(
+90deg,
+#5a3b1c,
+#5a3b1c 40px,
+#6b4624 40px,
+#6b4624 80px
+);
+}
+
+#diceContainer{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:35px;
+margin-bottom:40px;
+}
+
+.die{
+width:95px;
+height:95px;
+background:black;
+clip-path:polygon(50% 0%,0% 100%,100% 100%);
+display:flex;
+align-items:flex-end;
+justify-content:center;
+transition:transform .45s ease;
+}
+
+.tip{
+width:30px;
+height:30px;
+clip-path:polygon(50% 0%,0% 100%,100% 100%);
+background:black;
+margin-bottom:10px;
+}
+
+.white{
+background:white;
+}
+
+#result{
+font-size:60px;
+letter-spacing:15px;
+transition:transform .3s;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="diceContainer">
+<div class="die"><div class="tip"></div></div>
+<div class="die"><div class="tip"></div></div>
+<div class="die"><div class="tip"></div></div>
+<div class="die"><div class="tip"></div></div>
+</div>
+
+<div id="result">0</div>
+
+<script>
+
+const dice=document.querySelectorAll(".die")
+const result=document.getElementById("result")
+const body=document.body
+
+let audioCtx=null
+
+function randomBit(){
+return Math.random()<0.5?1:0
+}
+
+function tone(f,d,type="sine",v=0.5){
+
+if(!audioCtx)return
+
+const o=audioCtx.createOscillator()
+const g=audioCtx.createGain()
+
+o.type=type
+o.frequency.value=f
+
+o.connect(g)
+g.connect(audioCtx.destination)
+
+g.gain.value=v
+g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+d)
+
+o.start()
+o.stop(audioCtx.currentTime+d)
+
+}
+
+function win(){
+
+tone(523,.2)
+setTimeout(()=>tone(659,.25),150)
+setTimeout(()=>tone(784,.35),300)
+setTimeout(()=>tone(1046,.6),450)
+
+body.style.background="#ffffff"
+result.style.transform="scale(1.6)"
+
+setTimeout(()=>{
+body.style.background=
+`repeating-linear-gradient(
+90deg,
+#5a3b1c,
+#5a3b1c 40px,
+#6b4624 40px,
+#6b4624 80px
+)`
+result.style.transform="scale(1)"
+},700)
+
+}
+
+function lose(){
+
+tone(280,.4,"sawtooth")
+setTimeout(()=>tone(180,.7,"sawtooth"),250)
+
+body.style.background="#111"
+result.style.transform="scale(.6)"
+
+setTimeout(()=>{
+body.style.background=
+`repeating-linear-gradient(
+90deg,
+#5a3b1c,
+#5a3b1c 40px,
+#6b4624 40px,
+#6b4624 80px
+)`
+result.style.transform="scale(1)"
+},800)
+
+}
+
+function roll(){
+
+if(!audioCtx){
+audioCtx=new (window.AudioContext||window.webkitAudioContext)()
+}
+
+let total=0
+
+dice.forEach(d=>{
+
+const tip=d.querySelector(".tip")
+
+const rot=Math.random()*720
+
+d.style.transform=`rotate(${rot}deg) scale(1.2)`
+
+setTimeout(()=>{
+d.style.transform=`rotate(${rot}deg) scale(1)`
+},350)
+
+const v=randomBit()
+
+if(v){
+tip.classList.add("white")
+total++
+}else{
+tip.classList.remove("white")
+}
+
+})
+
+result.textContent=total
+
+if(total===4)setTimeout(win,400)
+if(total===0)setTimeout(lose,400)
+
+}
+
+document.addEventListener("touchstart",roll)
+document.addEventListener("click",roll)
+
+</script>
+
+</body>
+</html>
