@@ -68,10 +68,21 @@ letter-spacing:15px;
 transition:transform .3s;
 }
 
+#resultTop{
+font-size:60px;
+letter-spacing:15px;
+transform:rotate(180deg);
+position:absolute;
+top:40px;
+transition:transform .3s;
+}
+
 </style>
 </head>
 
 <body>
+
+<div id="resultTop">0</div>
 
 <div id="diceContainer">
 <div class="die"><div class="tip"></div></div>
@@ -86,6 +97,7 @@ transition:transform .3s;
 
 const dice=document.querySelectorAll(".die")
 const result=document.getElementById("result")
+const resultTop=document.getElementById("resultTop")
 const body=document.body
 
 let audioCtx=null
@@ -124,6 +136,7 @@ setTimeout(()=>tone(1046,.6),450)
 
 body.style.background="#ffffff"
 result.style.transform="scale(1.6)"
+resultTop.style.transform="rotate(180deg) scale(1.6)"
 
 setTimeout(()=>{
 body.style.background=
@@ -135,6 +148,7 @@ body.style.background=
 #6b4624 80px
 )`
 result.style.transform="scale(1)"
+resultTop.style.transform="rotate(180deg) scale(1)"
 },700)
 
 }
@@ -146,6 +160,7 @@ setTimeout(()=>tone(180,.7,"sawtooth"),250)
 
 body.style.background="#111"
 result.style.transform="scale(.6)"
+resultTop.style.transform="rotate(180deg) scale(.6)"
 
 setTimeout(()=>{
 body.style.background=
@@ -157,6 +172,7 @@ body.style.background=
 #6b4624 80px
 )`
 result.style.transform="scale(1)"
+resultTop.style.transform="rotate(180deg) scale(1)"
 },800)
 
 }
@@ -193,6 +209,7 @@ tip.classList.remove("white")
 })
 
 result.textContent=total
+resultTop.textContent=total
 
 if(total===4)setTimeout(win,400)
 if(total===0)setTimeout(lose,400)
